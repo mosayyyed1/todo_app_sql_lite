@@ -50,7 +50,7 @@ class DatabaseHelper {
 
   Future<void> insertToDoItem(ToDoItem item) async {
     final db = await database;
-    await db.insert(' todos', item.toMap(),
+    await db.insert('todos', item.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
