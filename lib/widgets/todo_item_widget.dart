@@ -17,13 +17,10 @@ class ToDoItemWidget extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
         tileColor: Colors.white,
-        leading: CircleAvatar(
-          backgroundColor: Colors.deepPurple.withOpacity(0.1),
-          child: const Icon(
-            Icons.task_alt,
-            color: Colors.deepPurple,
-            size: 28,
-          ),
+        leading: const Icon(
+          Icons.circle_outlined,
+          color: Colors.deepPurple,
+          size: 28,
         ),
         title: Text(
           item.title,
