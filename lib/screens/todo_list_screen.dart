@@ -45,11 +45,9 @@ class ToDoListScreenState extends State<ToDoListScreen> {
             Icons.dehaze_rounded,
             color: Colors.white,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () {},
         ),
-        title: const Text('ToDo List',
+        title: const Text('Tasker',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.deepPurple,
         elevation: 0,
