@@ -34,17 +34,19 @@ class DatabaseHelper {
     final db = await database;
     final maps = await db.query('todos');
     return maps
-        .map((map) => ToDoItem(
-              id: map['id'] as int,
-              title: map['title'] as String,
-              description: map['description'] as String? ?? '',
-              dueDate: map['dueDate'] != null
-                  ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'] is int
-                      ? map['dueDate'] as int
-                      : int.tryParse(map['dueDate'] as String) ??
-                          DateTime.now().millisecondsSinceEpoch)
-                  : DateTime.now(),
-            ))
+        .map(
+          (map) => ToDoItem(
+            id: map['id'] as int,
+            title: map['title'] as String,
+            description: map['description'] as String? ?? '',
+            dueDate: map['dueDate'] != null
+                ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'] is int
+                    ? map['dueDate'] as int
+                    : int.tryParse(map['dueDate'] as String) ??
+                        DateTime.now().millisecondsSinceEpoch)
+                : DateTime.now(),
+          ),
+        )
         .toList();
   }
 

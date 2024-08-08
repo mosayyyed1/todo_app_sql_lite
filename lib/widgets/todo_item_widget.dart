@@ -45,6 +45,7 @@ class ToDoItemWidget extends StatelessWidget {
           '${item.dueDate.toLocal()}'.split(' ')[0],
           style: const TextStyle(
             fontSize: 14,
+            fontWeight: FontWeight.bold,
             color: Colors.deepPurple,
           ),
         ),
