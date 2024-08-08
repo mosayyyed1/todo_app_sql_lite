@@ -41,24 +41,12 @@ class ToDoItemWidget extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${item.dueDate.toLocal()}'.split(' ')[0],
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Icon(
-              Icons.calendar_today,
-              color: Colors.deepPurple.withOpacity(0.6),
-              size: 18,
-            ),
-          ],
+        trailing: Text(
+          '${item.dueDate.toLocal()}'.split(' ')[0],
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.deepPurple,
+          ),
         ),
       ),
     );
