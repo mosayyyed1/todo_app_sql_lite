@@ -4,11 +4,12 @@ class ToDoItem {
   String description;
   DateTime dueDate;
 
-  ToDoItem(
-      {required this.id,
-      required this.title,
-      required this.description,
-      required this.dueDate});
+  ToDoItem({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.dueDate,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -22,6 +23,6 @@ class ToDoItem {
   ToDoItem.fromMap(Map<String, dynamic> map)
       : id = map['id'],
         title = map['title'],
-        description = map['description'],
+        description = map['description'] ?? '',
         dueDate = DateTime.fromMillisecondsSinceEpoch(map['dueDate']);
 }

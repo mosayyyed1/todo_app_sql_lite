@@ -30,6 +30,11 @@ class ToDoListScreenState extends State<ToDoListScreen> {
     });
   }
 
+  void _deleteToDoItem(int id) async {
+    await _databaseHelper.deleteToDoItem(id);
+    _refreshToDoList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
@@ -45,7 +50,9 @@ class ToDoListScreenState extends State<ToDoListScreen> {
             Icons.dehaze_rounded,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            // Implement drawer or other navigation logic here
+          },
         ),
         title: const Text('Tasker',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -64,17 +71,13 @@ class ToDoListScreenState extends State<ToDoListScreen> {
             ),
             child: Row(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      day,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                Text(
+                  day,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 45,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(
@@ -115,9 +118,7 @@ class ToDoListScreenState extends State<ToDoListScreen> {
               future: _toDoItems,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text(
@@ -139,7 +140,27 @@ class ToDoListScreenState extends State<ToDoListScreen> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         ToDoItem item = snapshot.data![index];
-                        return ToDoItemWidget(item: item);
+                        return Dismissible(
+                          key: ValueKey<int>(item.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onDismissed: (direction) {
+                            _deleteToDoItem(item.id);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('${item.title} deleted')),
+                            );
+                          },
+                          child: ToDoItemWidget(item: item),
+                        );
                       },
                     ),
                   );
@@ -155,7 +176,7 @@ class ToDoListScreenState extends State<ToDoListScreen> {
             isScrollControlled: true,
             context: context,
             shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             builder: (context) {
               return AddToDoBottomSheet(onAdd: _refreshToDoList);
@@ -164,6 +185,9 @@ class ToDoListScreenState extends State<ToDoListScreen> {
         },
         backgroundColor: Colors.deepPurple,
         elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: const Icon(
           Icons.add,
           size: 30,

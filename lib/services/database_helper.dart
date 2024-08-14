@@ -4,66 +4,45 @@ import 'package:sqflite/sqflite.dart';
 import '../models/todo_item.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
-  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
+  DatabaseHelper._init();
+
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
+    _database ??= await _initDB('todo.db');
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
-    final path = join(await getDatabasesPath(), 'todo_database.db');
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+  Future<Database> _initDB(String filePath) async {
+    final path = join(await getDatabasesPath(), filePath);
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future<void> _onCreate(Database db, int version) async {
+  Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE todos(
+      CREATE TABLE todos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-        description TEXT,
+        description TEXT NOT NULL,
         dueDate INTEGER NOT NULL
       )
     ''');
   }
 
-  Future<List<ToDoItem>> getToDoItems() async {
-    final db = await database;
-    final maps = await db.query('todos');
-    return maps
-        .map(
-          (map) => ToDoItem(
-            id: map['id'] as int,
-            title: map['title'] as String,
-            description: map['description'] as String? ?? '',
-            dueDate: map['dueDate'] != null
-                ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'] is int
-                    ? map['dueDate'] as int
-                    : int.tryParse(map['dueDate'] as String) ??
-                        DateTime.now().millisecondsSinceEpoch)
-                : DateTime.now(),
-          ),
-        )
-        .toList();
-  }
-
   Future<void> insertToDoItem(ToDoItem item) async {
-    final db = await database;
-    await db.insert('todos', item.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    final db = await instance.database;
+    await db.insert('todos', item.toMap());
   }
 
-  Future<void> updateToDoItem(ToDoItem item) async {
-    final db = await database;
-    await db
-        .update('todos', item.toMap(), where: 'id = ?', whereArgs: [item.id]);
+  Future<List<ToDoItem>> getToDoItems() async {
+    final db = await instance.database;
+    final result = await db.query('todos');
+    return result.map((json) => ToDoItem.fromMap(json)).toList();
   }
 
   Future<void> deleteToDoItem(int id) async {
-    final db = await database;
+    final db = await instance.database;
     await db.delete('todos', where: 'id = ?', whereArgs: [id]);
   }
 }
